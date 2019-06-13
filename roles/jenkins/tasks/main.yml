@@ -1,0 +1,26 @@
+---
+
+- name: Import Jenkins GPG
+  rpm_key:
+    state: present
+    key: http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
+
+- name: Add Jenkins repository
+  yum_repository:
+      name: jenkins
+      description: jekins repository
+      baseurl: http://pkg.jenkins.io/redhat
+      enabled: no
+      gpgcheck: yum_repository
+
+- name: Install Jenkins
+  yum:
+    name: jenkins
+    enablerepo: jenkins
+    state: present
+
+- name: Start Jenkins
+  service:
+    name: jenkins-2.45
+    enabled: yes
+    state: started
