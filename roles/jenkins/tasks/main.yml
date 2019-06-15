@@ -11,7 +11,7 @@
     description: jekins repository
     baseurl: http://pkg.jenkins.io/redhat
     enabled: no
-    gpgcheck: yum_repository
+    gpgcheck: yes
 
 - name: Install Jenkins
   yum:
