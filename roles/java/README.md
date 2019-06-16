@@ -1,27 +1,67 @@
-# ansible-java-8
+# Ansible Role: Java
 
-[![Build Status](https://travis-ci.org/sleighzy/ansible-java-8.svg?branch=master)](https://travis-ci.org/sleighzy/ansible-java-8)
+[![Build Status](https://travis-ci.org/geerlingguy/ansible-role-java.svg?branch=master)](https://travis-ci.org/geerlingguy/ansible-role-java)
 
-Ansible role for installing Oracle Java 8 JDK.
+Installs Java for RedHat/CentOS and Debian/Ubuntu linux servers.
 
-Java is installed to: `/usr/share/java-1.8.0`
+## Requirements
 
-Java alternatives are updated to use this by default and executable is `/usr/bin/java`.
+None.
 
 ## Role Variables
 
-    java_download_url: https://download.oracle.com/otn-pub/java/jdk/8u202-b08/1961070e4c9b4e26a04e7f5a083f551e/jdk-8u202-linux-x64.tar.gz
-    java_archive_name: jdk-8u202-linux-x64.tar.gz
-    java_root_dir: /usr/share/java-1.8.0
-    java_jdk_dir: "{{ java_root_dir }}/jdk1.8.0_202"
+Available variables are listed below, along with default values:
 
+    # The defaults provided by this role are specific to each distribution.
+    java_packages:
+      - java-1.7.0-openjdk
 
-## Example Playbook
+Set the version/development kit of Java to install, along with any other necessary Java packages. Some other options include are included in the distribution-specific files in this role's 'defaults' folder.
+
+    java_home: ""
+
+If set, the role will set the global environment variable `JAVA_HOME` to this value.
+
+## Dependencies
+
+None.
+
+## Example Playbook (using default package, usually OpenJDK 7)
 
     - hosts: servers
       roles:
-         - { role: sleighzy.java-8 }
+        - role: geerlingguy.java
+          become: yes
+
+## Example Playbook (install OpenJDK 8)
+
+For RHEL / CentOS:
+
+    - hosts: server
+      roles:
+        - role: geerlingguy.java
+          when: "ansible_os_family == 'RedHat'"
+          java_packages:
+            - java-1.8.0-openjdk
+
+For Ubuntu < 16.04:
+
+    - hosts: server
+      tasks:
+        - name: installing repo for Java 8 in Ubuntu
+  	      apt_repository: repo='ppa:openjdk-r/ppa'
+    
+    - hosts: server
+      roles:
+        - role: geerlingguy.java
+          when: "ansible_os_family == 'Debian'"
+          java_packages:
+            - openjdk-8-jdk
 
 ## License
 
-MIT
+MIT / BSD
+
+## Author Information
+
+This role was created in 2014 by [Jeff Geerling](https://www.jeffgeerling.com/), author of [Ansible for DevOps](https://www.ansiblefordevops.com/).
