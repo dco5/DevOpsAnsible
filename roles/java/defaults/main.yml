@@ -4,4 +4,4 @@
 java_packages:
   - java-1.8.0-openjdk
 
-java_home: ""
+java_home: "/usr/bin/java8"
