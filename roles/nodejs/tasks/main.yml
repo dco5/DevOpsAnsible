@@ -1,17 +1,19 @@
 ---
 
-- name: SERVER | Download the nvm(node version manager) install script
-  get_url: url=https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh dest=/tmp/install.sh
+- name: Install Remi repo.
+  yum:
+    name: "https://rpms.remirepo.net/enterprise/remi-release-7.rpm"
+    state: present
 
-- name: SERVER | Execute the nvm install script
-  shell: bash install.sh chdir=/tmp executable=/bin/bash
+- name: Import Remi GPG key.
+  rpm_key:
+    key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi"
+    state: present
 
-- name: SERVER | Register the NVM_DIR
-  shell: echo $NVM_DIR
-  register: nvm_dir
+- name: Install EPEL repo.
+  yum: name=epel-release state=present
 
-- name: SERVER | Install the specified node version using the nvm command and set it as default
-  shell: . {{ nvm_dir.stdout }}/nvm.sh && nvm install {{ node_version }} && nvm run {{node_version}} --version && nvm alias default {{node_version}}
-          creates=~/.nvm/versions/node/v{{ node_version }}
+- name: Install Node.js and npm.
+  yum: name=npm state=present enablerepo=epel
 
     
