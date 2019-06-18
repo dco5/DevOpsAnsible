@@ -1,11 +1,17 @@
 ---
 
-- name: Installing node and npm
-  yum:
-    name: "{{ item }}"
-    enablerepo: epel
-    state: installed
-  with_items:
-    - nodejs
-    - npm
+- name: SERVER | Download the nvm(node version manager) install script
+  get_url: url=https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh dest=/tmp/install.sh
+
+- name: SERVER | Execute the nvm install script
+  shell: bash install.sh chdir=/tmp executable=/bin/bash
+
+- name: SERVER | Register the NVM_DIR
+  shell: echo $NVM_DIR
+  register: nvm_dir
+
+- name: SERVER | Install the specified node version using the nvm command and set it as default
+  shell: . {{ nvm_dir.stdout }}/nvm.sh && nvm install {{ node_version }} && nvm run {{node_version}} --version && nvm alias default {{node_version}}
+          creates=~/.nvm/versions/node/v{{ node_version }}
+
     
